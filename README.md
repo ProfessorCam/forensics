@@ -14,7 +14,7 @@ The site has four investigation tools built in, so the case can be solved withou
 anything, and every exhibit also says which Wireshark menu does the same job:
 
 - a **display filter** box on every packet table that understands a subset of Wireshark's language
-  (`dns`, `http.request`, `sip`, `rtp`, `ip.addr == ...`, `udp.port == ...`, `dns.txt`,
+  (`dns`, `http.request`, `sip`, `rtp`, `ip.addr == ...`, `udp.port == ...`,
   `frame contains "text"`, `and`/`or`/`not`, parentheses; the full list is in `site/app.js`);
 - **export objects**: rebuilds every HTTP response from its TCP segments, shows images and text,
   lists JPEG metadata (EXIF and comments) and printable strings, and saves the file;
@@ -57,11 +57,11 @@ The flag is **not** in the repository. `tools/make-evidence.py` reads it from `t
 (ignored by git): one line, the three parts separated by `|`, for example
 
 ```
-epicCTF{c4p|tur3d_in_|the_act}
+epicCTF{ex4mple_|fl4g_g0es|_here}
 ```
 
-- part 1 becomes the TXT answer to the DNS lookup `part1.evidence.lab.local`;
-- part 2 becomes the EXIF `ImageDescription` of the photo (`part 2 of 3: ...`);
+- part 1 goes into a DNS answer;
+- part 2 goes into the photo's metadata;
 - part 3 is spoken in the call, plain words: underscores are read as spaces and the closing brace is
   read out loud, so keep it to ordinary words that a listener can spell.
 
@@ -74,8 +74,8 @@ python3 tools/make-evidence.py      # needs Pillow, espeak-ng and ffmpeg
 writes `site/pcaps/evidence.pcap` and `site/answers.js` (hashes only), and leaves the intermediate
 photo and audio in `tools/build/` (also ignored). Commit the capture and `answers.js`. Parts are
 checked after lower-casing and dropping everything but letters and digits; the whole flag after
-lower-casing, trimming, and turning spaces into underscores, so `epicctf{c4ptur3d in the act}`
-also passes.
+lower-casing, trimming, and turning spaces into underscores, so `epicctf{ex4mple fl4g g0es here}`
+also passes. A part typed with its label (`part 2 of 3: ...`) is accepted too.
 
 ## Layout
 
@@ -101,15 +101,15 @@ tools/flag.txt           the flag (not committed)
 Every byte is written by `tools/make-evidence.py`, checksums included, so Wireshark and tcpdump
 read it as an ordinary capture. The story: a mirror port copies everything Lab PC 2
 (192.168.110.60) sends or receives. ARP for the gateway; a DNS lookup and an NTP exchange; a ping
-to the Lab Server (10.10.20.5); `GET /index.html` from photos.lab.local; three more lookups,
-one of them TXT; `GET /photos/whiteboard.jpg` (20004 bytes in 14 segments); then a SIP call from a
+to the Lab Server (10.10.20.5); `GET /index.html` from photos.lab.local; three more lookups;
+`GET /photos/whiteboard.jpg` (20004 bytes in 14 segments); then a SIP call from a
 softphone on Lab PC 2 to the front desk phone (192.168.110.72): INVITE, 100, 180, 200 OK, ACK, two
 G.711 µ-law RTP streams of 771 packets each, BYE, 200 OK. The voices are espeak-ng, resampled to
 8 kHz by ffmpeg.
 
 ```sh
 tcpdump -nn -r site/pcaps/evidence.pcap 'not (udp and greater 200)'   # everything but the audio
-tshark -r site/pcaps/evidence.pcap -Y dns.txt -T fields -e dns.txt
+tshark -r site/pcaps/evidence.pcap -Y dns -V
 tshark -r site/pcaps/evidence.pcap --export-objects http,out
 tshark -q -r site/pcaps/evidence.pcap -z rtp,streams
 ```

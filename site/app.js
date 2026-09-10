@@ -281,7 +281,7 @@
   function loadPackets() {
     Array.prototype.forEach.call(main.querySelectorAll('.pktbox'), function (box) {
       fetchPcap(box.dataset.file).then(function (packets) {
-        box.innerHTML = '<form class="filter-bar" autocomplete="off"><label>Display filter <input type="text" class="filter-input" spellcheck="false" placeholder="e.g. dns, http.request, sip, rtp, ip.addr == 192.168.110.72, frame contains &quot;part&quot;"></label>' +
+        box.innerHTML = '<form class="filter-bar" autocomplete="off"><label>Display filter <input type="text" class="filter-input" spellcheck="false" placeholder="e.g. dns, http.request, sip, rtp, ip.addr == 192.168.110.72, frame contains &quot;lab&quot;"></label>' +
           '<button type="submit" class="asm-btn filter-apply">Apply</button><button type="button" class="asm-btn filter-clear">Clear</button><span class="filter-count"></span></form>' +
           '<p class="filter-error" hidden></p><div class="table-wrap pkt-table"></div>';
         var input = box.querySelector('.filter-input');
@@ -831,7 +831,8 @@
       '<span class="answer-msg" aria-live="polite">' + (solved ? '&#10003; Already found on this browser.' : '') + '</span></form>';
   }
 
-  function normPart(s) { return s.toLowerCase().replace(/[^a-z0-9]/g, ''); }
+  /* a part may be typed with the label it was found under ("part 2 of 3: ..."); the label is dropped */
+  function normPart(s) { return s.toLowerCase().replace(/^\s*part\s*\d+\s*of\s*\d+\s*:?/, '').replace(/[^a-z0-9]/g, ''); }
   function normFlag(s) { return s.trim().toLowerCase().replace(/\s+/g, '_'); }
 
   function wireAnswerBoxes() {
