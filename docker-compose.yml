@@ -1,0 +1,8 @@
+services:
+  forensics:
+    build: .
+    container_name: forensics
+    # Same pattern as the other Packet Lessons sites: host networking, so the
+    # site is reachable from the whole lab LAN. It listens on port 8082.
+    network_mode: host
+    restart: unless-stopped

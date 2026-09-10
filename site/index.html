@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Packet Forensics</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <button id="menu-btn" class="rail" type="button" aria-label="Open site menu" aria-expanded="false" aria-controls="sitemenu">
+      <span class="rail-chevron" aria-hidden="true">&#8250;</span>
+      <span class="rail-logo" aria-hidden="true">&#9673;</span>
+    </button>
+    <nav id="sitemenu" class="sitemenu" aria-label="Sites"></nav>
+    <aside class="side">
+      <div class="brand">
+        <a href="#" class="brand-link"><span class="logo" aria-hidden="true">&#9673;</span><span>Packet Lessons</span></a>
+        <p class="brand-sub"><b>Packet Forensics.</b> One capture, three hidden pieces, one flag. Filter, rebuild, listen.</p>
+      </div>
+      <nav id="nav" class="nav" aria-label="Exhibits"></nav>
+      <div class="side-foot">
+        One evidence file, built to match the lab network.<br>
+        Open it in Wireshark with the download button.
+      </div>
+    </aside>
+    <main id="main" class="main"><div class="level-bar-wrap" id="level-bar"></div><div id="content" aria-live="polite"></div></main>
+  </div>
+
+  <script src="pcap.js"></script>
+  <script src="answers.js"></script>
+  <script src="lessons.js"></script>
+  <script src="level.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
