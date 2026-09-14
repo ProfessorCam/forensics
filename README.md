@@ -1,7 +1,7 @@
 # Packet Forensics
 
 The fourth site in the Packet Lessons family: a capture-the-flag exercise in network forensics.
-One capture from the lab LAN (`evidence.pcap`, 1430 packets, 23 seconds) hides a flag of the form
+One capture from the lab LAN (`evidence.pcap`, 1444 packets, 23 seconds) hides a flag of the form
 `epicCTF{...}` in three pieces. Students find each piece with a different technique and assemble
 the flag. Every piece has an answer box, and the last row checks the whole flag, against SHA-256
 hashes only; the flag itself is not in the site.
@@ -112,7 +112,7 @@ read it as an ordinary capture. The story: a mirror port copies everything Lab P
 to the Lab Server (10.10.20.5); `GET /index.html` from photos.lab.local; three more lookups;
 `GET /photos/whiteboard.jpg` (20004 bytes in 14 segments); then a SIP call from a
 softphone on Lab PC 2 to the front desk phone (192.168.110.72): INVITE, 100, 180, 200 OK, ACK, two
-G.711 µ-law RTP streams of 685 packets each, BYE, 200 OK. The voices are espeak-ng, resampled to
+G.711 µ-law RTP streams of 692 packets each, BYE, 200 OK. The voices are espeak-ng, resampled to
 8 kHz by ffmpeg.
 
 ```sh

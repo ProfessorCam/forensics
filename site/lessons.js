@@ -52,7 +52,7 @@ var SITE = {
     lead: {
       s: 'One recording from the lab network. Someone moved a secret out in three pieces. Find the pieces, put them together, and you have the flag.',
       m: 'A single capture from the lab LAN holds three pieces of a flag: one in a DNS answer, one inside a photo fetched over HTTP, one spoken in a phone call. Find all three and assemble them.',
-      e: 'One libpcap file: 1430 frames, 23 seconds, taken from a mirror port on the lab LAN. Three flag fragments, carried by DNS, by HTTP, and by a G.711 RTP stream set up by SIP.'
+      e: 'One libpcap file: 1444 frames, 23 seconds, taken from a mirror port on the lab LAN. Three flag fragments, carried by DNS, by HTTP, and by a G.711 RTP stream set up by SIP.'
     },
     story: [
       { s: 'On 8 September at 14:07 the lab switch was told to copy everything that Lab PC 2 sent or received to the Student VM, which recorded it all into one file: <code>evidence.pcap</code>. Somebody at Lab PC 2 was sneaking a secret out of the lab. They were careful: no single packet gives the whole thing away. They split it into three pieces and hid each one in a different kind of traffic.',
@@ -63,7 +63,7 @@ var SITE = {
     rows: [
       ['Exhibit A', 'A DNS lookup that answers too much. Ten packets, one filter, and a careful read of what came back.'],
       ['Exhibit B', 'A photo fetched over HTTP. Rebuild the file from its fourteen segments and read what is written inside it.'],
-      ['Exhibit C', 'A phone call on the LAN. Turn 1370 packets of audio back into sound and listen.'],
+      ['Exhibit C', 'A phone call on the LAN. Turn 1384 packets of audio back into sound and listen.'],
       ['Submit the flag', 'Put the three pieces together in order.']
     ],
     levels: '<b>Hint level.</b> On this site the <b>Simple</b>, <b>Moderate</b> and <b>Engineer</b> buttons at the top right change how much help you get. Simple walks you through every click. Moderate names the filters and menus and leaves the clicking to you. Engineer gives you the protocol facts and nothing else. Your choice, and the pieces you have found, are remembered on this browser.',
@@ -79,9 +79,9 @@ var SITE = {
         e: 'Classic pcap, link type 1, all checksums valid. Wireshark: display filters, Export Objects → HTTP, Telephony → RTP → RTP Streams; tshark: <code>-Y dns -V</code>, <code>--export-objects http,dir</code>, <code>-z rtp,streams</code>.' }
     ],
     captureHint: {
-      s: 'This is the whole recording, all 1430 packets. Most of them are the phone call. Type <code>dns</code> in the filter box and press Apply to see how much smaller the haystack gets. Press Clear to get everything back.',
+      s: 'This is the whole recording, all 1444 packets. Most of them are the phone call. Type <code>dns</code> in the filter box and press Apply to see how much smaller the haystack gets. Press Clear to get everything back.',
       m: 'The whole capture. Try the filter box: <code>dns</code>, <code>http</code>, <code>sip</code>, <code>rtp</code>, <code>ip.addr == 192.168.110.72</code>, or <code>not rtp</code> to hide the audio and see the 60 packets that are left.',
-      e: 'All 1430 frames; 1370 are RTP. <code>not rtp</code> leaves the 60 that matter.'
+      e: 'All 1444 frames; 1384 are RTP. <code>not rtp</code> leaves the 60 that matter.'
     }
   }
 };
@@ -107,7 +107,7 @@ var LESSONS = [
     facts: [
       ['Protocol', 'DNS over UDP port 53'],
       ['Filter', '<code>dns</code>'],
-      ['Skill', { s: 'Filtering: making 1430 packets into 10', m: 'Display filters; reading a DNS answer', e: 'DNS record types and RDATA' }]
+      ['Skill', { s: 'Filtering: making 1444 packets into 10', m: 'Display filters; reading a DNS answer', e: 'DNS record types and RDATA' }]
     ],
     sections: [
       { h: 'What happened',
@@ -156,7 +156,7 @@ var LESSONS = [
       { s: 'All five questions go to the gateway. It is the name server for this network.', m: 'All lookups go to 192.168.110.1, the gateway, which is also the LAN’s resolver (compare the DHCP row on the Protocols site).', e: 'Resolver 192.168.110.1; answers are authoritative-looking (AA not set, RA set) with TTL 300.' }
     ],
     captures: [{ file: 'evidence.pcap', title: 'The DNS packets', filter: 'dns',
-      hint: { s: 'The filter box already says <code>dns</code>, so only the ten DNS packets are shown. Press Clear to see all 1430 again.', m: 'Pre-filtered on <code>dns</code>. Try <code>dns.flags.response == 1</code> for answers only, or <code>dns.qry.name contains lab</code>.', e: 'Filter <code>dns</code>; 10 of 1430.' } }]
+      hint: { s: 'The filter box already says <code>dns</code>, so only the ten DNS packets are shown. Press Clear to see all 1444 again.', m: 'Pre-filtered on <code>dns</code>. Try <code>dns.flags.response == 1</code> for answers only, or <code>dns.qry.name contains lab</code>.', e: 'Filter <code>dns</code>; 10 of 1444.' } }]
   },
 
   /* ================================================================== B: HTTP + JPEG */
@@ -243,8 +243,8 @@ var LESSONS = [
     subtitle: 'A phone call on the LAN',
     oneLiner: {
       s: 'Someone made a phone call over the network and said the last piece out loud. The sound is in the packets, and you can play it back.',
-      m: 'Lab PC 2 called the front desk phone. SIP set the call up and RTP carried the voice, 685 packets each way. Play the call and listen.',
-      e: 'SIP dialog on UDP/5060 (INVITE, 100, 180, 200, ACK; BYE, 200). SDP offers PCMU on 192.168.110.60:16384, answer 192.168.110.72:20002. Two RTP streams, PT 0, 20 ms per packet, 13.7 s, no loss.'
+      m: 'Lab PC 2 called the front desk phone. SIP set the call up and RTP carried the voice, 692 packets each way. Play the call and listen.',
+      e: 'SIP dialog on UDP/5060 (INVITE, 100, 180, 200, ACK; BYE, 200). SDP offers PCMU on 192.168.110.60:16384, answer 192.168.110.72:20002. Two RTP streams, PT 0, 20 ms per packet, 13.8 s, no loss.'
     },
     facts: [
       ['Protocols', 'SIP and SDP on UDP port 5060; RTP on UDP ports 16384 and 20002'],
@@ -256,7 +256,7 @@ var LESSONS = [
         p: [
           { s: 'A phone call over a network is two things. First a short exchange that sets the call up: "I want to call you", "ringing", "answered", and at the end "hang up". That is <b>SIP</b>. Then a river of tiny packets carrying the sound, fifty every second in each direction. That is <b>RTP</b>. Each sound packet holds twenty thousandths of a second of voice. Put them in order and you have the recording.',
             m: '<b>SIP</b> is the signalling: an <b>INVITE</b> from the softphone on Lab PC 2 to the desk phone, <b>100 Trying</b>, <b>180 Ringing</b> while it rang, <b>200 OK</b> when the desk picked up, and an <b>ACK</b>. The <b>SDP</b> body inside the INVITE and the 200 OK tells each side where to send audio (an IP address and UDP port) and in which codec (PCMU, that is G.711 µ-law). <b>RTP</b> then carries the audio: 160 samples, 20 ms, per packet, with a sequence number to spot loss and a timestamp to keep the timing. <b>BYE</b> ends the call.',
-            e: 'INVITE sip:desk@lab.local from "Lab PC 2" &lt;sip:pc2@lab.local&gt; to "Front Desk", Call-ID 6b8d2f1e4a@192.168.110.60. Offer: c=IN IP4 192.168.110.60, m=audio 16384 RTP/AVP 0 101. Answer in the 200 OK: 192.168.110.72:20002. RTP v2, PT 0, SSRC 0x1e0f3c2a (caller) and 0x7a45b19c (callee), 685 packets each, seq +1 and timestamp +160 per packet, marker on the first. Both sides talk.' },
+            e: 'INVITE sip:desk@lab.local from "Lab PC 2" &lt;sip:pc2@lab.local&gt; to "Front Desk", Call-ID 6b8d2f1e4a@192.168.110.60. Offer: c=IN IP4 192.168.110.60, m=audio 16384 RTP/AVP 0 101. Answer in the 200 OK: 192.168.110.72:20002. RTP v2, PT 0, SSRC 0x1e0f3c2a (caller) and 0x7a45b19c (callee), 692 packets each, seq +1 and timestamp +160 per packet, marker on the first. Both sides talk.' },
           { s: 'Someone at Lab PC 2 said something to the front desk that they should not have. Listen to the whole call, both sides.',
             m: 'The fragment is spoken. Listen to both sides of the call; the SIP headers tell you who called whom.',
             e: 'Fragment 3 is speech. Listen to both streams.' }
@@ -295,19 +295,19 @@ var LESSONS = [
       { from: 1, to: 0, label: '180 Ringing', dashed: true },
       { from: 1, to: 0, label: '200 OK (SDP: audio to .72:20002)' },
       { from: 0, to: 1, label: 'ACK' },
-      { from: 0, to: 1, label: 'RTP: 685 packets of G.711, 20 ms each' },
-      { from: 1, to: 0, label: 'RTP: 685 packets back' },
+      { from: 0, to: 1, label: 'RTP: 692 packets of G.711, 20 ms each' },
+      { from: 1, to: 0, label: 'RTP: 692 packets back' },
       { from: 0, to: 1, label: 'BYE' },
       { from: 1, to: 0, label: '200 OK', dashed: true }
     ],
     lookFor: [
       { s: 'The INVITE packet has the same kinds of headers as an email: From, To, Subject, and an ID for the call.', m: 'The INVITE carries From, To, Subject and Call-ID headers; the Call-ID ties all seven SIP packets together.', e: 'Call-ID 6b8d2f1e4a@192.168.110.60 on all seven; CSeq 1 INVITE / 1 ACK / 2 BYE; To gets a tag from 180 onwards.' },
-      { s: 'The desk phone rang for about two seconds (180 Ringing to 200 OK) before someone answered.', m: '180 Ringing at 7.41 s, 200 OK at 9.35 s: the desk rang for about two seconds. Audio starts 30 ms after the ACK.', e: 'INVITE 7.000 s, 180 at +0.412, 200 at +2.351, ACK +0.004, first RTP +0.035. BYE at 23.33 s.' },
-      { s: 'Each audio packet is 214 bytes: 160 of them are sound, the rest is addressing.', m: 'Each RTP packet is 214 bytes on the wire: 14 Ethernet + 20 IP + 8 UDP + 12 RTP + 160 bytes of audio. 50 packets a second per direction is 85.6 kbit/s each way.', e: '160-byte payload, 20 ms ptime, 12-byte RTP header, no CSRC, no extension. 685 packets, seq 4021–4705 and 812–1496, timestamps +160 per packet: no loss, no jitter to speak of.' },
-      { s: 'Sound packets have a running number. If a number were missing, part of the sound would be gone. Here none is.', m: 'Sequence numbers are contiguous and the Lost column in the player says 0, so the recording is complete.', e: 'Expected = received = 685 per SSRC.' }
+      { s: 'The desk phone rang for about two seconds (180 Ringing to 200 OK) before someone answered.', m: '180 Ringing at 7.41 s, 200 OK at 9.35 s: the desk rang for about two seconds. Audio starts 30 ms after the ACK.', e: 'INVITE 7.000 s, 180 at +0.412, 200 at +2.351, ACK +0.004, first RTP +0.035. BYE at 23.46 s.' },
+      { s: 'Each audio packet is 214 bytes: 160 of them are sound, the rest is addressing.', m: 'Each RTP packet is 214 bytes on the wire: 14 Ethernet + 20 IP + 8 UDP + 12 RTP + 160 bytes of audio. 50 packets a second per direction is 85.6 kbit/s each way.', e: '160-byte payload, 20 ms ptime, 12-byte RTP header, no CSRC, no extension. 692 packets, seq 4021–4712 and 812–1503, timestamps +160 per packet: no loss, no jitter to speak of.' },
+      { s: 'Sound packets have a running number. If a number were missing, part of the sound would be gone. Here none is.', m: 'Sequence numbers are contiguous and the Lost column in the player says 0, so the recording is complete.', e: 'Expected = received = 692 per SSRC.' }
     ],
     captures: [{ file: 'evidence.pcap', title: 'The signalling', filter: 'sip',
-      hint: { s: 'The filter box says <code>sip</code>: the seven packets that set up and end the call. Change it to <code>rtp</code> to see the 1370 sound packets (the table folds most of them away).', m: 'Pre-filtered on <code>sip</code>. Try <code>rtp</code>, <code>rtp.marker == 1</code> for the first packet of each stream, <code>rtp.ssrc == 0x1e0f3c2a</code> for the caller only, or <code>sdp</code> for the two packets that carry media descriptions.', e: 'Filter <code>sip</code>; <code>rtp.ssrc == 0x1e0f3c2a</code> is the caller.' } }]
+      hint: { s: 'The filter box says <code>sip</code>: the seven packets that set up and end the call. Change it to <code>rtp</code> to see the 1384 sound packets (the table folds most of them away).', m: 'Pre-filtered on <code>sip</code>. Try <code>rtp</code>, <code>rtp.marker == 1</code> for the first packet of each stream, <code>rtp.ssrc == 0x1e0f3c2a</code> for the caller only, or <code>sdp</code> for the two packets that carry media descriptions.', e: 'Filter <code>sip</code>; <code>rtp.ssrc == 0x1e0f3c2a</code> is the caller.' } }]
   },
 
   /* ================================================================== the verdict */
@@ -332,7 +332,7 @@ var LESSONS = [
       { h: 'What you practised',
         p: [{ s: 'Three ways of finding something in a pile of packets, and each of them is a real forensics skill.', m: 'Three techniques that come up in every network forensics case:', e: 'Techniques exercised:' }],
         steps: [
-          { s: '<b>Filtering.</b> 1430 packets became 10 with one word. Filters are how you find anything in a real capture, which can have millions.', m: '<b>Display filters</b> by protocol and field: the difference between a haystack and a needle.', e: 'Display filters; qtype-based DNS filtering.' },
+          { s: '<b>Filtering.</b> 1444 packets became 10 with one word. Filters are how you find anything in a real capture, which can have millions.', m: '<b>Display filters</b> by protocol and field: the difference between a haystack and a needle.', e: 'Display filters; qtype-based DNS filtering.' },
           { s: '<b>Rebuilding files.</b> Big things are cut into packets. Wireshark can glue them back. Then the file has its own secrets: its metadata.', m: '<b>TCP reassembly and object export</b>, then <b>file metadata</b> (EXIF): the file is evidence, and so is what is written inside it.', e: 'TCP stream reassembly; HTTP object extraction; EXIF/TIFF IFD parsing.' },
           { s: '<b>Playing back a call.</b> Voice over the network is just packets too, and unencrypted voice can be listened to by anyone who captured it.', m: '<b>VoIP reconstruction</b>: SIP tells you who called whom, SDP tells you where the audio is, RTP is the audio. Unencrypted RTP is a recording of the call.', e: 'SIP/SDP dialog analysis; RTP stream extraction and G.711 decode.' }
         ] },
