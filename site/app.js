@@ -868,15 +868,15 @@
     function size() { W = c.width = window.innerWidth * dpr; H = c.height = window.innerHeight * dpr; }
     size(); window.addEventListener('resize', size);
     var colors = ['#2f6fed', '#f5b400', '#e0475b', '#34a853', '#8e5cf6', '#ff7a1a', '#ffffff'];
-    var bits = [], n = 220;
+    var bits = [], n = 420;
     for (var i = 0; i < n; i++) {
-      var side = i % 2 === 0 ? -1 : 1;                       /* two cannons, bottom left and bottom right */
-      var ang = (side < 0 ? -60 : -120) * Math.PI / 180 + (Math.random() - 0.5) * 0.9;
-      var speed = (14 + Math.random() * 12) * dpr;
-      bits.push({ x: side < 0 ? 0 : W, y: H, vx: Math.cos(ang) * speed * -side, vy: Math.sin(ang) * speed, w: (6 + Math.random() * 6) * dpr, h: (3 + Math.random() * 4) * dpr,
-        rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3, color: colors[i % colors.length], drag: 0.985 + Math.random() * 0.01, delay: Math.random() * 25 });
+      var side = i % 2 === 0 ? -1 : 1;                       /* two cannons, top left and top right, firing down and inward */
+      var ang = (side < 0 ? 35 : 145) * Math.PI / 180 + (Math.random() - 0.5) * 1.0;
+      var speed = (9 + Math.random() * 13) * dpr;
+      bits.push({ x: side < 0 ? 0 : W, y: 0, vx: Math.cos(ang) * speed, vy: Math.sin(ang) * speed, w: (6 + Math.random() * 6) * dpr, h: (3 + Math.random() * 4) * dpr,
+        rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3, color: colors[i % colors.length], drag: 0.985 + Math.random() * 0.01, delay: Math.random() * 40 });
     }
-    var frame = 0, gravity = 0.35 * dpr;
+    var frame = 0, gravity = 0.22 * dpr;
     function tick() {
       frame++;
       ctx.clearRect(0, 0, W, H);
@@ -886,10 +886,10 @@
         b.vy += gravity; b.vx *= b.drag; b.vy *= b.drag; b.x += b.vx; b.y += b.vy; b.rot += b.vr;
         if (b.y < H + 20 * dpr) alive++;
         ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); ctx.fillStyle = b.color;
-        ctx.globalAlpha = frame > 200 ? Math.max(0, 1 - (frame - 200) / 50) : 1;
+        ctx.globalAlpha = frame > 260 ? Math.max(0, 1 - (frame - 260) / 50) : 1;
         ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h); ctx.restore();
       });
-      if (alive && frame < 250) requestAnimationFrame(tick);
+      if (alive && frame < 310) requestAnimationFrame(tick);
       else { window.removeEventListener('resize', size); c.remove(); }
     }
     requestAnimationFrame(tick);
@@ -936,6 +936,31 @@
     return H.map(function (x) { return (x >>> 0).toString(16).padStart(8, '0'); }).join('');
   }
 
+  /* ---------- dark mode: follows the system unless the visitor picks one; index.html applies it before first paint ---------- */
+
+  var THEME_KEY = 'packet-lessons-theme';
+  function currentTheme() { return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'; }
+  function applyTheme(t, remember) {
+    document.documentElement.dataset.theme = t;
+    if (remember) { try { localStorage.setItem(THEME_KEY, t); } catch (e) { /* fine */ } }
+    var b = document.getElementById('theme-btn');
+    if (b) { b.innerHTML = t === 'dark' ? '&#9728;' : '&#9790;'; b.title = t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'; b.setAttribute('aria-label', b.title); }
+  }
+  function wireThemeButton(wrap) {
+    if (!wrap) return;
+    var b = document.createElement('button');
+    b.type = 'button'; b.id = 'theme-btn'; b.className = 'theme-btn';
+    b.addEventListener('click', function () { applyTheme(currentTheme() === 'dark' ? 'light' : 'dark', true); });
+    wrap.appendChild(b);
+    applyTheme(currentTheme(), false);
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+        var stored = null; try { stored = localStorage.getItem(THEME_KEY); } catch (x) { /* fine */ }
+        if (!stored) applyTheme(e.matches ? 'dark' : 'light', false);
+      });
+    }
+  }
+
   /* ---------- routing ---------- */
 
   function route() {
@@ -953,6 +978,7 @@
   buildNav();
   window.rerender = function () { var y = main.scrollTop; route(); main.scrollTop = y; };
   wireLevelBar(document.getElementById('level-bar'));
+  wireThemeButton(document.getElementById('level-bar'));
   window.addEventListener('hashchange', route);
   route();
   if (typeof module !== 'undefined' && module.exports) module.exports = { sha256: sha256, compileFilter: compileFilter };

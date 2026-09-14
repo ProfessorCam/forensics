@@ -4,6 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Packet Forensics</title>
+  <script>
+    /* Apply the theme before the first paint: the visitor's choice, else the system setting. */
+    (function () { var t = null; try { t = localStorage.getItem('packet-lessons-theme'); } catch (e) {}
+      if (t !== 'dark' && t !== 'light') t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = t; })();
+  </script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
