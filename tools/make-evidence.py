@@ -18,7 +18,9 @@ by "|", for example:
           read as spaces, the closing brace read out loud
 
 Every byte is written by this script, checksums included, so Wireshark and tcpdump read
-the file as an ordinary capture. Needs Pillow (the photo), espeak-ng and ffmpeg (the voices).
+the file as an ordinary capture. Needs Pillow (the photo), ffmpeg, and espeak-ng unless you
+supply your own recordings as tools/voice/caller.mp3 and tools/voice/callee.mp3 (any format
+ffmpeg reads; they are converted to 8 kHz mono G.711 mu-law).
 
 Usage:  python3 tools/make-evidence.py
 """
@@ -171,11 +173,24 @@ def make_photo(part2):
     return data
 
 # ---------- Exhibit C: the voices ----------
+VOICE_DIR = os.path.join(HERE, 'voice')          # your own recordings go here: caller.mp3, callee.mp3 (wav, m4a, ogg also fine)
+VOICE_EXTS = ('.mp3', '.wav', '.m4a', '.ogg', '.flac', '.opus')
+
 def say(text, voice, name):
+    """The audio for one side of the call as raw G.711 mu-law at 8 kHz. A recording in tools/voice/
+    (caller.mp3, callee.mp3, ...) is used if present; otherwise espeak-ng reads the text."""
     os.makedirs(BUILD, exist_ok=True)
-    wav = os.path.join(BUILD, name + '.wav'); ul = os.path.join(BUILD, name + '.ul')
-    subprocess.run(['espeak-ng', '-v', voice, '-s', '140', '-w', wav, text], check=True)
-    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', wav, '-ar', '8000', '-ac', '1', '-f', 'mulaw', ul], check=True)
+    ul = os.path.join(BUILD, name + '.ul')
+    src = None
+    for ext in VOICE_EXTS:
+        cand = os.path.join(VOICE_DIR, name + ext)
+        if os.path.exists(cand): src = cand; break
+    if src:
+        print('using recording', os.path.relpath(src, HERE), 'for the', name)
+    else:
+        src = os.path.join(BUILD, name + '.wav')
+        subprocess.run(['espeak-ng', '-v', voice, '-s', '140', '-w', src, text], check=True)
+    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', src, '-ar', '8000', '-ac', '1', '-f', 'mulaw', ul], check=True)
     return open(ul, 'rb').read()
 
 SILENCE = 0xff   # mu-law zero

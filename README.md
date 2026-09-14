@@ -68,8 +68,16 @@ epicCTF{ex4mple_|fl4g_g0es|_here}
 Then:
 
 ```sh
-python3 tools/make-evidence.py      # needs Pillow, espeak-ng and ffmpeg
+python3 tools/make-evidence.py      # needs Pillow, ffmpeg, and espeak-ng for the default voices
 ```
+
+To use your own voice instead of the synthetic one, record the caller's side and save it as
+`tools/voice/caller.mp3` (wav, m4a, ogg, flac and opus work too); `tools/voice/callee.mp3` replaces
+the desk's reply the same way. Any file found there is used instead of espeak-ng and converted by
+ffmpeg to 8 kHz mono G.711 µ-law, which is what the phones would have sent. Say part 3 as plain
+words and say "close the curly brace" (or similar) at the end. Keep it short: every second of audio
+is 100 packets in the capture. The directory is ignored by git, so the recording stays out of the
+repository like the flag does.
 
 writes `site/pcaps/evidence.pcap` and `site/answers.js` (hashes only), and leaves the intermediate
 photo and audio in `tools/build/` (also ignored). Commit the capture and `answers.js`. Parts are

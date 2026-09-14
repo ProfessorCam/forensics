@@ -1,3 +1,5 @@
 tools/flag.txt
 tools/build/
 .DS_Store
+tools/voice/*
+!tools/voice/README.txt
