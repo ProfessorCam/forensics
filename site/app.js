@@ -849,11 +849,50 @@
         if (ok) {
           markSolved(kind === 'flag' ? 'flag' : part);
           msg.innerHTML = kind === 'flag' ? '&#10003; Correct. Case closed.' : '&#10003; Correct. That is part ' + (part + 1) + '.';
+          if (kind === 'flag') confetti();
         } else {
           msg.textContent = kind === 'flag' ? 'Not the flag. Check the three parts and the underscores between words.' : 'Not this part. Look again at the evidence.';
         }
       });
     });
+  }
+
+  /* ---------- confetti for the solved flag: a full-screen canvas for about four seconds ---------- */
+
+  function confetti() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var old = document.getElementById('confetti'); if (old) old.remove();
+    var c = document.createElement('canvas'); c.id = 'confetti'; c.className = 'confetti'; c.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(c);
+    var ctx = c.getContext('2d'), W, H, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    function size() { W = c.width = window.innerWidth * dpr; H = c.height = window.innerHeight * dpr; }
+    size(); window.addEventListener('resize', size);
+    var colors = ['#2f6fed', '#f5b400', '#e0475b', '#34a853', '#8e5cf6', '#ff7a1a', '#ffffff'];
+    var bits = [], n = 220;
+    for (var i = 0; i < n; i++) {
+      var side = i % 2 === 0 ? -1 : 1;                       /* two cannons, bottom left and bottom right */
+      var ang = (side < 0 ? -60 : -120) * Math.PI / 180 + (Math.random() - 0.5) * 0.9;
+      var speed = (14 + Math.random() * 12) * dpr;
+      bits.push({ x: side < 0 ? 0 : W, y: H, vx: Math.cos(ang) * speed * -side, vy: Math.sin(ang) * speed, w: (6 + Math.random() * 6) * dpr, h: (3 + Math.random() * 4) * dpr,
+        rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3, color: colors[i % colors.length], drag: 0.985 + Math.random() * 0.01, delay: Math.random() * 25 });
+    }
+    var frame = 0, gravity = 0.35 * dpr;
+    function tick() {
+      frame++;
+      ctx.clearRect(0, 0, W, H);
+      var alive = 0;
+      bits.forEach(function (b) {
+        if (frame < b.delay) { alive++; return; }
+        b.vy += gravity; b.vx *= b.drag; b.vy *= b.drag; b.x += b.vx; b.y += b.vy; b.rot += b.vr;
+        if (b.y < H + 20 * dpr) alive++;
+        ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); ctx.fillStyle = b.color;
+        ctx.globalAlpha = frame > 200 ? Math.max(0, 1 - (frame - 200) / 50) : 1;
+        ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h); ctx.restore();
+      });
+      if (alive && frame < 250) requestAnimationFrame(tick);
+      else { window.removeEventListener('resize', size); c.remove(); }
+    }
+    requestAnimationFrame(tick);
   }
 
   /* SHA-256 in plain JavaScript, so the check also works on http://<lan address> where crypto.subtle is unavailable. */

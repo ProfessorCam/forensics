@@ -399,3 +399,5 @@ form.answer.bad .answer-msg { color: #8a5a00; }
 .filter-bar .asm-btn, .obj-actions .asm-btn, .call-ctl .asm-btn, form.answer .asm-btn { width: auto; padding: 0 12px; height: 32px; white-space: nowrap; }
 .cols { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .objects-table td, .calls td, .streams td { vertical-align: middle; }
+
+.confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 100; }
